@@ -1,0 +1,18 @@
+# Frontend
+research-intelligence/node_modules/
+research-intelligence/dist/
+
+# Backend
+research-assistant-auth/__pycache__/
+research-assistant-auth/uploads/
+
+# Environment files
+research-assistant-auth/.env
+research-intelligence/.env
+
+research-assistant-auth/utils/__pycache__/
+
+research-assistant-auth/documents/
+
+# General
+*.log

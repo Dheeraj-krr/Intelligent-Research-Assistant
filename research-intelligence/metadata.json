@@ -1,0 +1,6 @@
+{
+  "name": "Research Intelligence",
+  "description": "An advanced, high-performance Research Intelligence platform for document analysis, and automated insights generation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
