@@ -35,7 +35,7 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
 
     try {
       // 2. Railway backend ko data bhej rahe hain
-      const response = await axios.post(`${BACKEND_URL}/api/register`, {
+      const response = await axios.post(`${BACKEND_URL}/register`, {
         name: name,
         email: email,
         password: password
