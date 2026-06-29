@@ -9,8 +9,10 @@ export default function ProjectsViewEnhanced() {
   const [error, setError] = useState<string | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
   const [isDeletingProjectId, setIsDeletingProjectId] = useState<number | null>(null);
-
   const [projectDocuments, setProjectDocuments] = useState<any[]>([]);
+  const [metadataModalOpen, setMetadataModalOpen] = useState(false);
+  const [selectedMetadataDoc, setSelectedMetadataDoc] = useState<any | null>(null);
+  const [isMetadataLoading, setIsMetadataLoading] = useState(false);
 
   const fetchProjects = async () => {
     try {
@@ -270,6 +272,41 @@ export default function ProjectsViewEnhanced() {
 
   };
 
+  const openMetadata = async (doc: any) => {
+    try {
+      setIsMetadataLoading(true);
+      setMetadataModalOpen(true);
+      setSelectedMetadataDoc(null);
+
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://127.0.0.1:8000/documents/${doc.id}/metadata`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Unable to load metadata");
+      }
+
+      setSelectedMetadataDoc(data);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Unable to load metadata");
+      setMetadataModalOpen(false);
+    } finally {
+      setIsMetadataLoading(false);
+    }
+  };
+
+  const formatCharacterCount = (count: number) => {
+    return count.toLocaleString();
+  };
+
 
   return (
     <section className="glass-panel rounded-3xl border border-brand-border bg-brand-surface/80 p-6 shadow-xl backdrop-blur-xl">
@@ -460,6 +497,18 @@ export default function ProjectsViewEnhanced() {
                     <p className="text-sm">
                       <b>Size:</b> {doc.file_size}
                     </p>
+                    <p className="text-sm">
+                      <b>Chunks:</b> {doc.chunk_count ?? 0}
+                    </p>
+                    <p className="text-sm">
+                      <b>Characters:</b> {formatCharacterCount(doc.character_count ?? 0)}
+                    </p>
+                    <button
+                      onClick={() => openMetadata(doc)}
+                      className="mt-3 mr-2 rounded-xl bg-sky-600 px-3 py-1 text-white"
+                    >
+                      View Metadata
+                    </button>
                     <button
 
                       onClick={() =>
@@ -507,6 +556,48 @@ export default function ProjectsViewEnhanced() {
 
         )}
       </div>
+
+      {metadataModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-lg rounded-3xl border border-brand-border bg-brand-surface p-6 shadow-2xl">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-secondary">Document metadata</p>
+                <h3 className="mt-2 text-xl font-semibold text-brand-text-primary">
+                  {selectedMetadataDoc?.file_name || "Document details"}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMetadataModalOpen(false)}
+                className="rounded-2xl border border-brand-border px-3 py-2 text-sm text-brand-secondary"
+              >
+                Close
+              </button>
+            </div>
+
+            {isMetadataLoading ? (
+              <div className="mt-5 animate-pulse space-y-3">
+                <div className="h-4 rounded bg-brand-surface-high" />
+                <div className="h-4 rounded bg-brand-surface-high" />
+                <div className="h-4 rounded bg-brand-surface-high" />
+              </div>
+            ) : selectedMetadataDoc ? (
+              <div className="mt-5 space-y-3 text-sm text-brand-on-secondary-container">
+                <p><span className="font-semibold text-brand-text-primary">Title:</span> {selectedMetadataDoc.title || "N/A"}</p>
+                <p><span className="font-semibold text-brand-text-primary">File name:</span> {selectedMetadataDoc.file_name || "N/A"}</p>
+                <p><span className="font-semibold text-brand-text-primary">Type:</span> {selectedMetadataDoc.document_type || "N/A"}</p>
+                <p><span className="font-semibold text-brand-text-primary">Uploaded:</span> {selectedMetadataDoc.upload_date || "N/A"}</p>
+                <p><span className="font-semibold text-brand-text-primary">File size:</span> {selectedMetadataDoc.file_size || "N/A"}</p>
+                <p><span className="font-semibold text-brand-text-primary">Notes:</span> {selectedMetadataDoc.notes || "No notes"}</p>
+                <p><span className="font-semibold text-brand-text-primary">Authors:</span> {Array.isArray(selectedMetadataDoc.authors) ? selectedMetadataDoc.authors.join(", ") : selectedMetadataDoc.authors || "N/A"}</p>
+                <p><span className="font-semibold text-brand-text-primary">Chunks:</span> {selectedMetadataDoc.chunk_count ?? 0}</p>
+                <p><span className="font-semibold text-brand-text-primary">Characters:</span> {formatCharacterCount(selectedMetadataDoc.character_count ?? 0)}</p>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

@@ -23,9 +23,9 @@ def extract_pdf_text(file_path: str):
 
                 text = page.extract_text()
 
-                # -----------------------
+               
                 # Quality Validation
-                # -----------------------
+                
 
                 if not text:
 
@@ -283,6 +283,11 @@ def extract_metadata(
         pdf = fitz.open(file_path)
 
         info = pdf.metadata
+
+
+        print("\n ==== pdf metadata ====")
+        print(info)
+        print("===============\n")
 
         metadata["title"] = info.get("title", "")
 

@@ -48,7 +48,9 @@ export default function UploadsView() {
     const data = await response.json();
 
     if (response.ok) {
-      alert("Document Uploaded Successfully");
+      const chunkCount = data.chunk_count ?? 0;
+      const characterCount = data.character_count ?? 0;
+      alert(`Document uploaded successfully.\nChunks: ${chunkCount}\nCharacters: ${characterCount.toLocaleString()}`);
       setSelectedFile(null);
       setFileName("");
       setNotes("");
