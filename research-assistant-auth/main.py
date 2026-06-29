@@ -1936,7 +1936,7 @@ def login(user: UserLogin):
     ):
         raise HTTPException(status_code=400, detail="Incorrect password")
 
-    expiration = datetime.utcnow() + timedelta(minutes=30)
+    expiration = datetime.utcnow() + timedelta(minutes=60)
 
     token = jwt.encode(
     {

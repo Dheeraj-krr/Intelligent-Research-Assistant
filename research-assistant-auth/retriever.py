@@ -55,6 +55,9 @@ def retrieve(query, file_paths=None, top_k=5):
         # be defensive about missing metadata
         doc_name = str(chunk.get("source_document", "")).lower()
 
+       
+       
+
 
       
 
@@ -68,11 +71,15 @@ def retrieve(query, file_paths=None, top_k=5):
         if len(results) == top_k:
             break
 
+
+    
+
     print("\n=== RETRIEVED CHUNKS ===")
 
     # If filtering removed all candidates but there are vectors in the index, fall back
     if not results and allowed_docs:
         print("⚠️  No chunks matched filter — falling back to unfiltered results")
+        
         results = []
         for idx in indices[0]:
             if idx is None or int(idx) < 0:
