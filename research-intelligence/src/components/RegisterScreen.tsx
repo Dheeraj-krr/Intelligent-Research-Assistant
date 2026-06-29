@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Lock, User, ShieldAlert, Award, ArrowRight, ShieldCheck, Terminal } from 'lucide-react';
 import { motion } from 'motion/react';
+import axios from 'axios';
 
 interface RegisterScreenProps {
   onRegisterSuccess: (name: string, email: string) => void;
@@ -16,7 +17,9 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
   const [errorText, setErrorText] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorText(null);
 
@@ -27,15 +30,38 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
 
     setIsLoading(true);
 
-    // Simulate database write
-    setTimeout(() => {
+    // 1. Apna asli Railway backend URL yahan daalein
+    const BACKEND_URL = "intelligent-research-assistant-production.up.railway.app";
+
+    try {
+      // 2. Railway backend ko data bhej rahe hain
+      const response = await axios.post(`${BACKEND_URL}/api/register`, {
+        name: name,
+        email: email,
+        password: password
+      });
+
+      // 3. Agar backend successfully user ko save kar leta hai
       setSuccess(true);
       setIsLoading(false);
+
       setTimeout(() => {
         onRegisterSuccess(name, email);
       }, 1000);
-    }, 1800);
+
+    } catch (error: any) {
+      setIsLoading(false);
+      // Agar backend se koi error aata hai (jaise Email already exists)
+      if (error.response && error.response.data && error.response.data.message) {
+        setErrorText(error.response.data.message);
+      } else {
+        setErrorText('Something went wrong. Please try again.');
+      }
+      console.error("Registration error:", error);
+    }
   };
+
+  
 
   return (
     <div className="relative min-h-screen bg-brand-bg text-brand-primary flex flex-col justify-center items-center p-4">
@@ -186,7 +212,7 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
 
                   console.log(data);
 
-                  if(response.ok) {
+                  if (response.ok) {
                     alert("Registration Successful")
                     onNavigateToLogin();
                   } else {
@@ -217,7 +243,7 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
             </button>
           </footer>
 
-          
+
         </motion.div>
       </main>
 

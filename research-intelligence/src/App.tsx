@@ -88,7 +88,7 @@ export default function App() {
 
           tokenStatus: "Active",
 
-          tokenExpiresIn: "1 min",
+          tokenExpiresIn: "30 min",
 
           avatarUrl:
             DEFAULT_USER.avatarUrl
