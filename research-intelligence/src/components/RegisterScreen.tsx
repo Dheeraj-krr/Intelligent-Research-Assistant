@@ -19,7 +19,7 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
 
 
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorText(null);
 
@@ -30,38 +30,17 @@ export default function RegisterScreen({ onRegisterSuccess, onNavigateToLogin }:
 
     setIsLoading(true);
 
-    // 1. Apna asli Railway backend URL yahan daalein
-    const BACKEND_URL = "intelligent-research-assistant-production.up.railway.app";
-
-    try {
-      // 2. Railway backend ko data bhej rahe hain
-      const response = await axios.post(`${BACKEND_URL}/register`, {
-        name: name,
-        email: email,
-        password: password
-      });
-
-      // 3. Agar backend successfully user ko save kar leta hai
+    // Simulate database write
+    setTimeout(() => {
       setSuccess(true);
       setIsLoading(false);
-
       setTimeout(() => {
         onRegisterSuccess(name, email);
       }, 1000);
-
-    } catch (error: any) {
-      setIsLoading(false);
-      // Agar backend se koi error aata hai (jaise Email already exists)
-      if (error.response && error.response.data && error.response.data.message) {
-        setErrorText(error.response.data.message);
-      } else {
-        setErrorText('Something went wrong. Please try again.');
-      }
-      console.error("Registration error:", error);
-    }
+    }, 1800);
   };
 
-  
+
 
   return (
     <div className="relative min-h-screen bg-brand-bg text-brand-primary flex flex-col justify-center items-center p-4">
